@@ -1,4 +1,5 @@
 import type { CalcResult } from '../../utils/types';
+import { rateFloor, rateMultiply } from '../../utils/math';
 import {
   incomeTaxBrackets2025,
   incomeTaxBracketsReference,
@@ -17,7 +18,7 @@ export type IncomeTaxResult = {
 export function calcIncomeTax(taxableIncomeForIncomeTax: number): IncomeTaxResult {
   const bracket = incomeTaxBrackets2025.find((b) => taxableIncomeForIncomeTax <= b.upToTaxableIncome)!;
 
-  const baseTaxRaw = Math.max(0, taxableIncomeForIncomeTax * bracket.rate - bracket.deduction);
+  const baseTaxRaw = Math.max(0, rateMultiply(taxableIncomeForIncomeTax, bracket.rate) - bracket.deduction);
   const baseTaxValue = Math.floor(baseTaxRaw);
   const baseTax: CalcResult = {
     value: baseTaxValue,
@@ -28,7 +29,7 @@ export function calcIncomeTax(taxableIncomeForIncomeTax: number): IncomeTaxResul
     reference: incomeTaxBracketsReference,
   };
 
-  const reconstructionValue = Math.floor(baseTaxValue * reconstructionTaxRate2025);
+  const reconstructionValue = rateFloor(baseTaxValue, reconstructionTaxRate2025);
   const reconstructionTax: CalcResult = {
     value: reconstructionValue,
     formula: `${yen(baseTaxValue)} × ${(reconstructionTaxRate2025 * 100).toFixed(1)}% = ${yen(reconstructionValue)} 円`,

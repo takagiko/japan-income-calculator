@@ -1,4 +1,5 @@
 import type { CalcResult } from '../../utils/types';
+import { rateFloor } from '../../utils/math';
 import {
   standardMonthlyBrackets2025,
   healthInsuranceRate2025,
@@ -56,7 +57,7 @@ export function calcSocialInsurance(args: {
   };
 
   // 月給分の保険料
-  const healthMonthlyValue = Math.floor((sm * healthInsuranceRate2025) / 2);
+  const healthMonthlyValue = rateFloor(sm, healthInsuranceRate2025, 2);
   const healthMonthly: CalcResult = {
     value: healthMonthlyValue,
     formula: `${yen(sm)} × ${(healthInsuranceRate2025 * 100).toFixed(2)}% × 1/2 = ${yen(healthMonthlyValue)} 円/月`,
@@ -67,7 +68,7 @@ export function calcSocialInsurance(args: {
     ],
   };
 
-  const nursingMonthlyValue = hasNursingInsurance ? Math.floor((sm * nursingCareInsuranceRate2025) / 2) : 0;
+  const nursingMonthlyValue = hasNursingInsurance ? rateFloor(sm, nursingCareInsuranceRate2025, 2) : 0;
   const nursingCareMonthly: CalcResult = {
     value: nursingMonthlyValue,
     formula: hasNursingInsurance
@@ -84,7 +85,7 @@ export function calcSocialInsurance(args: {
     Math.max(sm, pensionStandardRemunerationFloor2025),
     pensionStandardRemunerationCap2025,
   );
-  const pensionMonthlyValue = Math.floor((pensionSm * pensionInsuranceRate2025) / 2);
+  const pensionMonthlyValue = rateFloor(pensionSm, pensionInsuranceRate2025, 2);
   const pensionCapNote =
     sm > pensionStandardRemunerationCap2025
       ? `（厚年の上限 ${yen(pensionStandardRemunerationCap2025)} 円を適用）`
@@ -102,7 +103,7 @@ export function calcSocialInsurance(args: {
   };
 
   // 月給分の雇用保険（年額）
-  const empMonthlyAnnualValue = Math.floor(monthlySalary * 12 * employmentInsuranceWorkerRate2025);
+  const empMonthlyAnnualValue = rateFloor(monthlySalary * 12, employmentInsuranceWorkerRate2025);
   const employmentInsuranceMonthlyAnnual: CalcResult = {
     value: empMonthlyAnnualValue,
     formula: `月給 ${yen(monthlySalary)} × 12 × ${(employmentInsuranceWorkerRate2025 * 1000).toFixed(1)}/1000 = ${yen(empMonthlyAnnualValue)} 円/年`,
@@ -180,12 +181,12 @@ function calcBonusInsurance(
       ? `（厚年の1回上限 ${yen(standardBonusPerOccurrenceCapPension2025)} 円を適用）`
       : '';
 
-  const healthValue = Math.floor((healthCapped * healthInsuranceRate2025) / 2);
-  const nursingValue = hasNursingInsurance ? Math.floor((healthCapped * nursingCareInsuranceRate2025) / 2) : 0;
-  const pensionValue = Math.floor((pensionStandard * pensionInsuranceRate2025) / 2);
+  const healthValue = rateFloor(healthCapped, healthInsuranceRate2025, 2);
+  const nursingValue = hasNursingInsurance ? rateFloor(healthCapped, nursingCareInsuranceRate2025, 2) : 0;
+  const pensionValue = rateFloor(pensionStandard, pensionInsuranceRate2025, 2);
 
   // 雇用保険は賞与の実額に料率（標準賞与額ではない）
-  const empBonusValue = Math.floor(bonusAmount * employmentInsuranceWorkerRate2025);
+  const empBonusValue = rateFloor(bonusAmount, employmentInsuranceWorkerRate2025);
 
   const standardBonus: CalcResult = {
     value: rawStandard,

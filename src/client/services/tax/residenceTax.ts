@@ -1,4 +1,5 @@
 import type { CalcResult, DualDeduction } from '../../utils/types';
+import { rateFloor } from '../../utils/math';
 import {
   residenceTaxIncomeRateTotal,
   residenceTaxFlatMunicipal,
@@ -30,7 +31,7 @@ export function calcResidenceTax(args: {
   dependentDeduction: DualDeduction;
 }): ResidenceTaxResult {
   // 所得割（調整控除前）
-  const incomeBasedRaw = Math.floor(args.taxableIncomeForResidenceTax * residenceTaxIncomeRateTotal);
+  const incomeBasedRaw = rateFloor(args.taxableIncomeForResidenceTax, residenceTaxIncomeRateTotal);
 
   // 人的控除差（簡易：実際の控除額の差をそのまま使う）
   const basicDiff = args.basicDeduction.forIncomeTax.value - args.basicDeduction.forResidenceTax.value;
@@ -45,11 +46,11 @@ export function calcResidenceTax(args: {
     adjFormula = `本人合計所得 ${yen(args.totalIncome)} 円 > ${yen(adjustmentDeductionExclusionIncome)} 円 → 適用なし`;
   } else if (args.taxableIncomeForResidenceTax <= adjustmentDeductionThreshold) {
     const target = Math.min(personalDiff, args.taxableIncomeForResidenceTax);
-    adjValue = Math.floor(target * 0.05);
+    adjValue = rateFloor(target, 0.05);
     adjFormula = `min(人的控除差 ${yen(personalDiff)}, 課税所得 ${yen(args.taxableIncomeForResidenceTax)}) × 5% = ${yen(adjValue)} 円`;
   } else {
     const remainder = personalDiff - (args.taxableIncomeForResidenceTax - adjustmentDeductionThreshold);
-    const calculated = Math.floor(remainder * 0.05);
+    const calculated = rateFloor(remainder, 0.05);
     adjValue = Math.max(adjustmentDeductionMinimum, calculated);
     adjFormula =
       `(人的控除差 ${yen(personalDiff)} − (課税所得 ${yen(args.taxableIncomeForResidenceTax)} − 200万)) × 5%` +

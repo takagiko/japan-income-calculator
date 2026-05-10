@@ -1,4 +1,5 @@
 import type { CalcResult } from '../../utils/types';
+import { rateMultiply } from '../../utils/math';
 import {
   employmentIncomeDeductionBrackets2025,
   employmentIncomeDeductionReference,
@@ -9,7 +10,7 @@ export function calcEmploymentIncomeDeduction(grossAnnualIncome: number): CalcRe
     (b) => grossAnnualIncome <= b.upToIncome,
   )!;
 
-  const deduction = Math.floor(grossAnnualIncome * bracket.rate + bracket.flatAddition);
+  const deduction = Math.floor(rateMultiply(grossAnnualIncome, bracket.rate) + bracket.flatAddition);
 
   const yen = (n: number) => n.toLocaleString('ja-JP');
   const formula =
