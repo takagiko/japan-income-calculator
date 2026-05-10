@@ -1,0 +1,479 @@
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #111;
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+  background: #f7f7f9;
+}
+
+.app {
+  max-width: 880px;
+  margin: 2rem auto;
+  padding: 0 1rem 4rem;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0 0 0.25rem;
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin: 2rem 0 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #333;
+}
+
+.preamble {
+  color: #555;
+  font-size: 0.875rem;
+  margin: 0 0 1.5rem;
+}
+
+.note {
+  font-size: 0.85rem;
+  color: #555;
+  background: #fafafa;
+  border-left: 3px solid #888;
+  padding: 0.5rem 0.75rem;
+  margin: 0.5rem 0 1rem;
+}
+
+/* Summary box */
+.summary {
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+  color: white;
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+/* Summary 内の 4 手取り並べ */
+.summary-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+}
+@media (max-width: 700px) {
+  .summary-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.summary-item {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: inherit;
+  cursor: pointer;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  text-align: left;
+  font: inherit;
+}
+.summary-item:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+.summary-item[aria-expanded='true'] {
+  background: rgba(255, 255, 255, 0.24);
+  outline: 1px solid rgba(255, 255, 255, 0.55);
+}
+.summary-item:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.75);
+  outline-offset: 1px;
+}
+.summary-item .label {
+  font-size: 0.72rem;
+  opacity: 0.85;
+  margin-bottom: 0.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.summary-item .value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* 展開した控除内訳の 3 カラム */
+.summary .breakdown {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+.summary .breakdown > div { text-align: center; }
+.summary .breakdown .b-label { font-size: 0.75rem; opacity: 0.85; }
+.summary .breakdown .b-value { font-size: 1.05rem; font-weight: 600; margin-top: 0.2rem; }
+
+/* 展開された内訳エリア */
+.summary-detail {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+.summary-detail-title {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+.summary-detail .breakdown {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* セクション内の「行」をまとめるコンテナ（カードを廃止して行ベースに） */
+.grid-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+}
+@media (min-width: 700px) {
+  .grid-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  /* 2列レイアウト時、奇数番目（左列）に右側の縦線 */
+  .grid-cards > *:nth-child(odd):not(.span-all) {
+    border-right: 1px solid #f0f0f0;
+  }
+}
+.grid-cards > .span-all {
+  grid-column: 1 / -1;
+}
+/* 行間の罫線（最後の行を除く） */
+.grid-cards > * {
+  border-bottom: 1px solid #f0f0f0;
+}
+.grid-cards > *:last-child {
+  border-bottom: none;
+}
+@media (min-width: 700px) {
+  /* 2列時、ペアの最終行は下線なし */
+  .grid-cards > *:nth-last-child(2):not(.span-all):not(:last-child) {
+    border-bottom: none;
+  }
+}
+
+/* 行ベースの Calc step / Dual step */
+.calc-step,
+.dual-step {
+  background: transparent;
+}
+.calc-step-header,
+.dual-step-header {
+  display: flex;
+  align-items: baseline;
+  width: 100%;
+  padding: 0.4rem 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  gap: 0.5rem;
+}
+.calc-step-header:hover,
+.dual-step-header:hover {
+  background: #f9fafb;
+}
+.calc-step-header[aria-expanded='true'],
+.dual-step-header[aria-expanded='true'] {
+  background: #eff6ff;
+}
+.calc-step-header h3,
+.dual-step-header h3 {
+  margin: 0;
+  margin-right: auto;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+}
+.calc-step-header:hover h3,
+.dual-step-header:hover h3 {
+  text-decoration: underline;
+  text-decoration-color: #1e40af;
+  text-underline-offset: 3px;
+}
+.calc-step-header:focus-visible,
+.dual-step-header:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: -2px;
+}
+.calc-step-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e40af;
+  white-space: nowrap;
+}
+
+/* DualCalcStep の行内 2 値表示 */
+.dual-values {
+  display: inline-flex;
+  gap: 1.25rem;
+  align-items: baseline;
+}
+.dual-values > span {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e40af;
+  white-space: nowrap;
+}
+.dual-values small {
+  font-size: 0.7rem;
+  font-weight: normal;
+  color: #777;
+  margin-right: 0.3rem;
+}
+
+/* ホバー時だけ表示する「式・根拠を見る」ヒント */
+.formula-hint {
+  font-size: 0.7rem;
+  color: #1e40af;
+  opacity: 0;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+.calc-step-header:hover .formula-hint,
+.calc-step-header:focus-visible .formula-hint,
+.dual-step-header:hover .formula-hint,
+.dual-step-header:focus-visible .formula-hint {
+  opacity: 1;
+}
+[aria-expanded='true'] .formula-hint {
+  opacity: 1;
+  color: #6b7280;
+}
+.calc-step-quick {
+  font-size: 0.75rem;
+  color: #777;
+  padding: 0 0.75rem 0.4rem 1.5rem;
+}
+.calc-step-quick span {
+  margin-right: 1rem;
+}
+
+/* 展開時の式・根拠の表示エリア */
+.formula-body {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0 0.75rem 0.5rem 1.25rem;
+  padding: 0.4rem 0.75rem;
+  border-left: 2px solid #d4d4d8;
+  background: #fafafa;
+  border-radius: 0 4px 4px 0;
+}
+.formula-note {
+  margin-top: 0.4rem;
+  padding: 0.4rem 0.6rem;
+  background: #fffbea;
+  border-radius: 4px;
+  color: #525252;
+}
+.formula-section {
+  margin-top: 0.5rem;
+}
+.formula-section:first-child {
+  margin-top: 0;
+}
+.formula-section strong {
+  display: block;
+  color: #333;
+  margin-bottom: 0.15rem;
+}
+
+/* （DualCalcStep の旧カードスタイルは行ベースに置き換え。.dual-step-grid / .dual-side は
+   現在使用していない。今後ボーナスや他の dual 系で復活させたい場合のために、見た目だけ
+   定義は削除しておく。） */
+
+/* Input form (コンパクトバー) */
+.input-form {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.5rem 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.input-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.7rem;
+  padding: 0.4rem 0;
+}
+.input-bar + .input-bar {
+  border-top: 1px dashed #e5e7eb;
+}
+
+.input-form .field {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0;
+}
+.input-form .field-label {
+  font-size: 0.82rem;
+  color: #555;
+  white-space: nowrap;
+}
+.input-form .field-suffix {
+  font-size: 0.75rem;
+  color: #777;
+}
+.input-form .field input {
+  width: 6em;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+}
+.input-form .field.check input[type='checkbox'] {
+  margin: 0;
+}
+
+.input-form .annual-display {
+  margin-left: auto;
+  font-size: 0.82rem;
+  padding: 0.2rem 0.55rem;
+  background: #eef2ff;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.input-form .annual-display strong {
+  color: #1e40af;
+  font-size: 0.92rem;
+}
+
+.input-form .group-label {
+  font-size: 0.82rem;
+  color: #555;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dep-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.dep-inline .dep-label {
+  font-size: 0.78rem;
+  color: #555;
+  white-space: nowrap;
+}
+
+/* +/- ステッパー（コンパクト） */
+.number-stepper {
+  display: inline-flex;
+  align-items: stretch;
+}
+.number-stepper button {
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 1px solid #aaa;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0;
+  user-select: none;
+}
+.number-stepper button:hover:not(:disabled) { background: #eef2ff; }
+.number-stepper button:disabled { cursor: not-allowed; opacity: 0.4; }
+.number-stepper button:first-child {
+  border-radius: 4px 0 0 4px;
+  border-right: none;
+}
+.number-stepper button:last-child {
+  border-radius: 0 4px 4px 0;
+  border-left: none;
+}
+.number-stepper input[type='number'] {
+  width: 1.8em;
+  text-align: center;
+  border-radius: 0;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
+  margin: 0;
+  padding: 0.05rem 0.15rem;
+  font-size: 0.85rem;
+}
+.number-stepper input[type='number']::-webkit-outer-spin-button,
+.number-stepper input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input-form .input-note {
+  margin: 0.5rem 0 0;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.75rem;
+  color: #555;
+  background: #fafafa;
+  border-left: 3px solid #888;
+  line-height: 1.4;
+}
+
+/* 公開時の免責・注記フッター */
+.disclaimer {
+  margin-top: 3rem;
+  padding: 1rem 1.25rem;
+  font-size: 0.78rem;
+  color: #555;
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  line-height: 1.6;
+}
+.disclaimer p {
+  margin: 0.4rem 0;
+}
+.disclaimer-sub {
+  font-size: 0.72rem;
+  color: #777;
+}
+
+/* ホバーで出るツールチップ（data-tooltip 属性ベース） */
+.input-form [data-tooltip] { position: relative; }
+.input-form [data-tooltip]:hover::after,
+.input-form [data-tooltip]:focus-within::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  background: #374151;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  max-width: 320px;
+  width: max-content;
+  white-space: normal;
+  z-index: 30;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+.input-form [data-tooltip]:hover::before,
+.input-form [data-tooltip]:focus-within::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 3px);
+  left: 14px;
+  border: 5px solid transparent;
+  border-top-color: #374151;
+  z-index: 30;
+  pointer-events: none;
+}
+

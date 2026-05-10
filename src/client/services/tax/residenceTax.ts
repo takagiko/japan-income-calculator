@@ -1,0 +1,102 @@
+import type { CalcResult, DualDeduction } from '../../utils/types';
+import {
+  residenceTaxIncomeRateTotal,
+  residenceTaxFlatMunicipal,
+  residenceTaxFlatPrefectural,
+  forestEnvironmentTax,
+  residenceTaxFlatTotal,
+  adjustmentDeductionThreshold,
+  adjustmentDeductionMinimum,
+  adjustmentDeductionExclusionIncome,
+  residenceTaxIncomeReference,
+  residenceTaxFlatReference,
+  adjustmentDeductionReference,
+} from '../../../rules/residence-tax-2025';
+
+const yen = (n: number) => n.toLocaleString('ja-JP');
+
+export type ResidenceTaxResult = {
+  adjustmentDeduction: CalcResult;     // 調整控除
+  incomeBasedTax: CalcResult;          // 所得割（調整控除後）
+  flatRateTax: CalcResult;             // 均等割 + 森林環境税
+  totalTax: CalcResult;                // 住民税 合計（年額）
+};
+
+export function calcResidenceTax(args: {
+  taxableIncomeForResidenceTax: number;
+  totalIncome: number;
+  basicDeduction: DualDeduction;
+  spouseDeduction: DualDeduction;
+  dependentDeduction: DualDeduction;
+}): ResidenceTaxResult {
+  // 所得割（調整控除前）
+  const incomeBasedRaw = Math.floor(args.taxableIncomeForResidenceTax * residenceTaxIncomeRateTotal);
+
+  // 人的控除差（簡易：実際の控除額の差をそのまま使う）
+  const basicDiff = args.basicDeduction.forIncomeTax.value - args.basicDeduction.forResidenceTax.value;
+  const spouseDiff = args.spouseDeduction.forIncomeTax.value - args.spouseDeduction.forResidenceTax.value;
+  const depDiff = args.dependentDeduction.forIncomeTax.value - args.dependentDeduction.forResidenceTax.value;
+  const personalDiff = basicDiff + spouseDiff + depDiff;
+
+  // 調整控除
+  let adjValue = 0;
+  let adjFormula = '';
+  if (args.totalIncome > adjustmentDeductionExclusionIncome) {
+    adjFormula = `本人合計所得 ${yen(args.totalIncome)} 円 > ${yen(adjustmentDeductionExclusionIncome)} 円 → 適用なし`;
+  } else if (args.taxableIncomeForResidenceTax <= adjustmentDeductionThreshold) {
+    const target = Math.min(personalDiff, args.taxableIncomeForResidenceTax);
+    adjValue = Math.floor(target * 0.05);
+    adjFormula = `min(人的控除差 ${yen(personalDiff)}, 課税所得 ${yen(args.taxableIncomeForResidenceTax)}) × 5% = ${yen(adjValue)} 円`;
+  } else {
+    const remainder = personalDiff - (args.taxableIncomeForResidenceTax - adjustmentDeductionThreshold);
+    const calculated = Math.floor(remainder * 0.05);
+    adjValue = Math.max(adjustmentDeductionMinimum, calculated);
+    adjFormula =
+      `(人的控除差 ${yen(personalDiff)} − (課税所得 ${yen(args.taxableIncomeForResidenceTax)} − 200万)) × 5%` +
+      ` = ${yen(calculated)} 円 → 最低保証 2,500円と比較 → ${yen(adjValue)} 円`;
+  }
+
+  const adjustmentDeduction: CalcResult = {
+    value: adjValue,
+    formula: adjFormula,
+    reference: adjustmentDeductionReference,
+    steps: [
+      { label: '基礎控除差', value: basicDiff },
+      { label: '配偶者控除差', value: spouseDiff },
+      { label: '扶養控除差', value: depDiff },
+    ],
+  };
+
+  // 所得割（最終）
+  const incomeBasedFinal = Math.max(0, incomeBasedRaw - adjValue);
+  const incomeBasedTax: CalcResult = {
+    value: incomeBasedFinal,
+    formula:
+      `${yen(args.taxableIncomeForResidenceTax)} × ${(residenceTaxIncomeRateTotal * 100).toFixed(0)}%` +
+      ` = ${yen(incomeBasedRaw)} 円 − 調整控除 ${yen(adjValue)} 円 = ${yen(incomeBasedFinal)} 円`,
+    reference: residenceTaxIncomeReference,
+  };
+
+  // 均等割 + 森林環境税
+  const flatRateTax: CalcResult = {
+    value: residenceTaxFlatTotal,
+    formula:
+      `市町村 ${yen(residenceTaxFlatMunicipal)} + 道府県 ${yen(residenceTaxFlatPrefectural)}` +
+      ` + 森林環境税(国税) ${yen(forestEnvironmentTax)} = ${yen(residenceTaxFlatTotal)} 円`,
+    reference: residenceTaxFlatReference,
+  };
+
+  // 合計
+  const totalValue = incomeBasedFinal + residenceTaxFlatTotal;
+  const totalTax: CalcResult = {
+    value: totalValue,
+    formula: `所得割 ${yen(incomeBasedFinal)} + 均等割等 ${yen(residenceTaxFlatTotal)} = ${yen(totalValue)} 円`,
+    reference: '住民税 + 森林環境税の年税額（簡易合算）',
+    steps: [
+      { label: '年額', value: totalValue },
+      { label: '月額（÷12 概算）', value: Math.floor(totalValue / 12) },
+    ],
+  };
+
+  return { adjustmentDeduction, incomeBasedTax, flatRateTax, totalTax };
+}
