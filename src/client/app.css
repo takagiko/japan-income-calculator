@@ -487,6 +487,9 @@ h2 {
   font-variant-numeric: tabular-nums;
   font-size: 0.9rem;
 }
+.input-form .field.check {
+  gap: 0.15rem;
+}
 .input-form .field.check input[type='checkbox'] {
   margin: 0;
 }
