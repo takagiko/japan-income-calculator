@@ -1,4 +1,4 @@
-import type { CalcResult } from '../../utils/types';
+import type { CalcResult, FormulaItem } from '../../utils/types';
 import { rateFloor, rateMultiply } from '../../utils/math';
 import {
   incomeTaxBrackets2025,
@@ -10,9 +10,9 @@ import {
 const yen = (n: number) => n.toLocaleString('ja-JP');
 
 export type IncomeTaxResult = {
-  baseTax: CalcResult;            // 基準所得税額（速算表で計算した分）
-  reconstructionTax: CalcResult;  // 復興特別所得税（基準所得税額 × 2.1%）
-  totalTax: CalcResult;           // 合計、100円未満切り捨て後の年税額
+  baseTax: CalcResult;
+  reconstructionTax: CalcResult;
+  totalTax: CalcResult;
 };
 
 export function calcIncomeTax(taxableIncomeForIncomeTax: number): IncomeTaxResult {
@@ -20,12 +20,33 @@ export function calcIncomeTax(taxableIncomeForIncomeTax: number): IncomeTaxResul
 
   const baseTaxRaw = Math.max(0, rateMultiply(taxableIncomeForIncomeTax, bracket.rate) - bracket.deduction);
   const baseTaxValue = Math.floor(baseTaxRaw);
+
+  const baseTaxBreakdown: FormulaItem[] = [
+    { label: '課税所得（所得税）', value: `${yen(taxableIncomeForIncomeTax)} 円` },
+    { label: 'ブラケット', value: bracket.description },
+    { label: '税率', value: `${(bracket.rate * 100).toFixed(0)}%` },
+  ];
+  if (bracket.deduction > 0) {
+    baseTaxBreakdown.push({ label: '速算表の控除額', value: `${yen(bracket.deduction)} 円` });
+    baseTaxBreakdown.push({
+      label: '計算',
+      value: `${yen(taxableIncomeForIncomeTax)} × ${(bracket.rate * 100).toFixed(0)}% − ${yen(bracket.deduction)} 円`,
+    });
+  } else {
+    baseTaxBreakdown.push({
+      label: '計算',
+      value: `${yen(taxableIncomeForIncomeTax)} × ${(bracket.rate * 100).toFixed(0)}%`,
+    });
+  }
+  baseTaxBreakdown.push({ label: '基準所得税額', value: `${yen(baseTaxValue)} 円`, isResult: true });
+
   const baseTax: CalcResult = {
     value: baseTaxValue,
     formula:
       bracket.deduction === 0
         ? `${yen(taxableIncomeForIncomeTax)} × ${(bracket.rate * 100).toFixed(0)}% = ${yen(baseTaxValue)} 円（${bracket.description}）`
         : `${yen(taxableIncomeForIncomeTax)} × ${(bracket.rate * 100).toFixed(0)}% − ${yen(bracket.deduction)} = ${yen(baseTaxValue)} 円（${bracket.description}）`,
+    breakdown: baseTaxBreakdown,
     reference: incomeTaxBracketsReference,
   };
 
@@ -33,6 +54,11 @@ export function calcIncomeTax(taxableIncomeForIncomeTax: number): IncomeTaxResul
   const reconstructionTax: CalcResult = {
     value: reconstructionValue,
     formula: `${yen(baseTaxValue)} × ${(reconstructionTaxRate2025 * 100).toFixed(1)}% = ${yen(reconstructionValue)} 円`,
+    breakdown: [
+      { label: '基準所得税額', value: `${yen(baseTaxValue)} 円` },
+      { label: '復興特別所得税率', value: `${(reconstructionTaxRate2025 * 100).toFixed(1)}%`, note: '(令和19年まで)' },
+      { label: '復興特別所得税', value: `${yen(reconstructionValue)} 円`, isResult: true },
+    ],
     reference: reconstructionTaxReference,
   };
 
@@ -41,6 +67,13 @@ export function calcIncomeTax(taxableIncomeForIncomeTax: number): IncomeTaxResul
   const totalTax: CalcResult = {
     value: totalTaxValue,
     formula: `${yen(baseTaxValue)} + ${yen(reconstructionValue)} = ${yen(beforeRounding)} 円 → 100円未満切り捨て ${yen(totalTaxValue)} 円`,
+    breakdown: [
+      { label: '基準所得税額', value: `${yen(baseTaxValue)} 円` },
+      { label: '復興特別所得税', value: `${yen(reconstructionValue)} 円` },
+      { label: '合計', value: `${yen(beforeRounding)} 円` },
+      { label: '100円未満切り捨て', value: '−', note: '(国税通則法 第119条)' },
+      { label: '所得税 合計(年額)', value: `${yen(totalTaxValue)} 円`, isResult: true },
+    ],
     reference: '年税額の確定（国税通則法 第119条 100円未満切り捨て）',
     steps: [
       { label: '年額', value: totalTaxValue },

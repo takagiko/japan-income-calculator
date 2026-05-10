@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { CalcResult } from '../utils/types';
+import { FormulaTable } from './FormulaTable';
 
 type Props = {
   title: string;
@@ -35,8 +36,12 @@ export function CalcStep({ title, result, className }: Props) {
       )}
       {open && (
         <div className="formula-body">
-          <div>式: {result.formula}</div>
-          <div>根拠: {result.reference}</div>
+          {result.breakdown ? (
+            <FormulaTable items={result.breakdown} />
+          ) : (
+            <div>式: {result.formula}</div>
+          )}
+          <div className="formula-reference">根拠: {result.reference}</div>
           {result.note && <div className="formula-note">備考: {result.note}</div>}
         </div>
       )}

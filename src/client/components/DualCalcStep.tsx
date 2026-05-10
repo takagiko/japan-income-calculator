@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { CalcResult, DualDeduction } from '../utils/types';
+import { FormulaTable } from './FormulaTable';
 
 type Props = {
   title: string;
@@ -40,8 +41,12 @@ function FormulaSection({ label, result }: { label: string; result: CalcResult }
   return (
     <div className="formula-section">
       <strong>{label}</strong>
-      <div>式: {result.formula}</div>
-      <div>根拠: {result.reference}</div>
+      {result.breakdown ? (
+        <FormulaTable items={result.breakdown} />
+      ) : (
+        <div>式: {result.formula}</div>
+      )}
+      <div className="formula-reference">根拠: {result.reference}</div>
       {result.note && <div className="formula-note">備考: {result.note}</div>}
     </div>
   );

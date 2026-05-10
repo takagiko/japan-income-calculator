@@ -15,12 +15,21 @@ export type CalcInput = {
   dependents: Dependents;
 };
 
+// 構造化された計算内訳の 1 行（ラベル: 値）。
+export type FormulaItem = {
+  label: string;
+  value: string;       // 表示用に整形された値（円, %, 等級 等を含む文字列）
+  isResult?: boolean;  // 結果行を強調表示するか
+  note?: string;       // 補足（小さい文字で右に併記）
+};
+
 export type CalcResult<T = number> = {
   value: T;
-  formula: string;
+  formula: string;            // 一行サマリ（breakdown が無い場合のフォールバック）
+  breakdown?: FormulaItem[];  // 構造化された内訳（あればこちらを優先表示）
   reference: string;
   steps?: { label: string; value: number; note?: string }[];
-  note?: string;  // 補足説明（展開時に「備考」として表示）
+  note?: string;
 };
 
 export type DualDeduction = {

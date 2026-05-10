@@ -277,6 +277,48 @@ h2 {
   border-radius: 4px;
   color: #525252;
 }
+.formula-reference {
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  color: #777;
+}
+
+/* 構造化された内訳テーブル */
+.breakdown-table {
+  margin: 0;
+  font-size: 0.85rem;
+}
+.breakdown-row {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0 1rem;
+  padding: 0.15rem 0;
+}
+.breakdown-row dt {
+  color: #6b7280;
+  font-weight: normal;
+  white-space: nowrap;
+}
+.breakdown-row dd {
+  margin: 0;
+  color: #333;
+  font-variant-numeric: tabular-nums;
+}
+.breakdown-result {
+  border-top: 1px solid #d4d4d8;
+  margin-top: 0.3rem;
+  padding-top: 0.3rem;
+}
+.breakdown-result dt,
+.breakdown-result dd {
+  font-weight: 600;
+  color: #1e40af;
+}
+.breakdown-note {
+  color: #888;
+  font-size: 0.85em;
+  margin-left: 0.4rem;
+}
 .formula-section {
   margin-top: 0.5rem;
 }

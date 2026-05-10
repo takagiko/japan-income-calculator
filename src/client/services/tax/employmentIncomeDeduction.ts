@@ -23,6 +23,23 @@ export function calcEmploymentIncomeDeduction(grossAnnualIncome: number): CalcRe
   return {
     value: deduction,
     formula,
+    breakdown: bracket.rate === 0
+      ? [
+          { label: '年収', value: `${yen(grossAnnualIncome)} 円` },
+          { label: 'ブラケット', value: bracket.description },
+          { label: '給与所得控除', value: `${yen(deduction)} 円`, isResult: true },
+        ]
+      : [
+          { label: '年収', value: `${yen(grossAnnualIncome)} 円` },
+          { label: 'ブラケット', value: bracket.description },
+          {
+            label: '計算',
+            value: `${yen(grossAnnualIncome)} × ${(bracket.rate * 100).toFixed(0)}% ${
+              bracket.flatAddition >= 0 ? '+' : '−'
+            } ${yen(Math.abs(bracket.flatAddition))} 円`,
+          },
+          { label: '給与所得控除', value: `${yen(deduction)} 円`, isResult: true },
+        ],
     reference: employmentIncomeDeductionReference,
   };
 }
