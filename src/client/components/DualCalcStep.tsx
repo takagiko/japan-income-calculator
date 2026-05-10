@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { CalcResult, DualDeduction } from '../utils/types';
 import { FormulaTable } from './FormulaTable';
+import { ExternalLink } from './ExternalLink';
 
 type Props = {
   title: string;
@@ -46,7 +47,14 @@ function FormulaSection({ label, result }: { label: string; result: CalcResult }
       ) : (
         <div>式: {result.formula}</div>
       )}
-      <div className="formula-reference">根拠: {result.reference}</div>
+      <div className="formula-reference">
+        根拠:{' '}
+        {result.referenceUrl ? (
+          <ExternalLink url={result.referenceUrl}>{result.reference}</ExternalLink>
+        ) : (
+          result.reference
+        )}
+      </div>
       {result.note && <div className="formula-note">備考: {result.note}</div>}
     </div>
   );

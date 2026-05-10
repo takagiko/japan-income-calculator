@@ -28,6 +28,7 @@ export type CalcResult<T = number> = {
   formula: string;            // 一行サマリ（breakdown が無い場合のフォールバック）
   breakdown?: FormulaItem[];  // 構造化された内訳（あればこちらを優先表示）
   reference: string;
+  referenceUrl?: string;      // 設定時、reference をクリック可能リンクにし、確認ダイアログを出してから外部サイトを開く
   steps?: { label: string; value: number; note?: string }[];
   note?: string;
 };

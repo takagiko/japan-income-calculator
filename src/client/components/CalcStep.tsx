@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { CalcResult } from '../utils/types';
 import { FormulaTable } from './FormulaTable';
+import { ExternalLink } from './ExternalLink';
 
 type Props = {
   title: string;
@@ -41,7 +42,14 @@ export function CalcStep({ title, result, className }: Props) {
           ) : (
             <div>式: {result.formula}</div>
           )}
-          <div className="formula-reference">根拠: {result.reference}</div>
+          <div className="formula-reference">
+            根拠:{' '}
+            {result.referenceUrl ? (
+              <ExternalLink url={result.referenceUrl}>{result.reference}</ExternalLink>
+            ) : (
+              result.reference
+            )}
+          </div>
           {result.note && <div className="formula-note">備考: {result.note}</div>}
         </div>
       )}

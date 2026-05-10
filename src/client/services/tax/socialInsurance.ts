@@ -10,6 +10,7 @@ import {
   standardBonusAnnualCapHealth2025,
   standardBonusPerOccurrenceCapPension2025,
   kyokaiKenpoTokyoReference,
+  kyokaiKenpoTokyoReferenceUrl,
   pensionReference,
 } from '../../../rules/kyokai-kenpo-tokyo-2025';
 import {
@@ -63,6 +64,7 @@ export function calcSocialInsurance(args: {
       { label: '標準報酬月額', value: `${yen(sm)} 円`, isResult: true },
     ],
     reference: kyokaiKenpoTokyoReference,
+    referenceUrl: kyokaiKenpoTokyoReferenceUrl,
   };
 
   // 月給分の保険料
@@ -77,6 +79,7 @@ export function calcSocialInsurance(args: {
       { label: '健康保険料(月額・本人負担)', value: `${yen(healthMonthlyValue)} 円`, isResult: true },
     ],
     reference: kyokaiKenpoTokyoReference,
+    referenceUrl: kyokaiKenpoTokyoReferenceUrl,
     steps: [
       { label: '月額', value: healthMonthlyValue },
       { label: '年額（×12）', value: healthMonthlyValue * 12 },
@@ -101,6 +104,7 @@ export function calcSocialInsurance(args: {
           { label: '介護保険料(月額)', value: '0 円', isResult: true },
         ],
     reference: kyokaiKenpoTokyoReference,
+    referenceUrl: kyokaiKenpoTokyoReferenceUrl,
     steps: [
       { label: '月額', value: nursingMonthlyValue },
       { label: '年額（×12）', value: nursingMonthlyValue * 12 },
@@ -271,6 +275,7 @@ function calcBonusInsurance(
     formula: `${yen(healthCapped)} × ${(healthInsuranceRate2025 * 100).toFixed(2)}% × 1/2 = ${yen(healthValue)} 円${healthCapNote}`,
     breakdown: healthBreakdown,
     reference: kyokaiKenpoTokyoReference,
+    referenceUrl: kyokaiKenpoTokyoReferenceUrl,
   };
 
   const nursingCare: CalcResult = {
@@ -290,6 +295,7 @@ function calcBonusInsurance(
           { label: '介護保険料(1回分)', value: '0 円', isResult: true },
         ],
     reference: kyokaiKenpoTokyoReference,
+    referenceUrl: kyokaiKenpoTokyoReferenceUrl,
   };
 
   const pensionBreakdown: FormulaItem[] = [

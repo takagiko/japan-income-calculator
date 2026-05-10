@@ -80,4 +80,5 @@ export const standardBonusAnnualCapHealth2025 = 5_730_000;
 export const standardBonusPerOccurrenceCapPension2025 = 1_500_000;
 
 export const kyokaiKenpoTokyoReference = '協会けんぽ東京支部 令和7年度料率（令和7年3月分〜）';
+export const kyokaiKenpoTokyoReferenceUrl = 'https://www.kyoukaikenpo.or.jp/assets/13tokyo_7.pdf';
 export const pensionReference = '厚生年金保険料率 令和7年度（厚生労働省、全国一律 18.300%）';
