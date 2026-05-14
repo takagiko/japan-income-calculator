@@ -1,5 +1,5 @@
 // 給与所得控除 令和7年分（所得税法 第28条第3項）
-// 「収入が upToIncome 以下」のブラケットを上から探し、 収入 × rate + flatAddition で控除額を求める。
+// 「収入が upToIncome 以下」の該当する収入区分を上から探し、 収入 × rate + flatAddition で控除額を求める。
 
 export type DeductionBracket = {
   upToIncome: number;       // この収入金額以下が対象（Infinity は「上限なし」の意）
@@ -18,3 +18,5 @@ export const employmentIncomeDeductionBrackets2025: DeductionBracket[] = [
 ];
 
 export const employmentIncomeDeductionReference = '所得税法 第28条第3項（令和7年分）';
+export const employmentIncomeDeductionReferenceUrl =
+  'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm';

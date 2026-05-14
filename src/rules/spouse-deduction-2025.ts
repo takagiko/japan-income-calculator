@@ -128,3 +128,13 @@ export const spouseDeductionBrackets2025: SpouseDeductionBracket[] = [
 ];
 
 export const spouseDeductionReference = '配偶者控除・配偶者特別控除（所得税法 第83条・83条の2 / 地方税法 第34条）';
+export const spouseDeductionReferenceLinks = [
+  {
+    label: '配偶者控除（タックスアンサー No.1191）',
+    url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1191.htm',
+  },
+  {
+    label: '配偶者特別控除（タックスアンサー No.1195）',
+    url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1195.htm',
+  },
+];

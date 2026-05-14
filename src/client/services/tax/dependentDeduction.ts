@@ -2,6 +2,7 @@ import type { CalcResult, Dependents, DualDeduction } from '../../utils/types';
 import {
   dependentDeductionAmounts2025,
   dependentDeductionReference,
+  dependentDeductionReferenceUrl,
 } from '../../../rules/dependent-deduction-2025';
 
 const yen = (n: number) => n.toLocaleString('ja-JP');
@@ -30,6 +31,7 @@ export function calcDependentDeduction(dependents: Dependents): DualDeduction {
       value: total,
       formula: parts.length === 0 ? '扶養親族なし → 0 円' : `${parts.join(' + ')} = ${yen(total)} 円`,
       reference: dependentDeductionReference,
+      referenceUrl: dependentDeductionReferenceUrl,
     };
   };
 

@@ -13,6 +13,9 @@ const yen = (n: number) => n.toLocaleString('ja-JP');
 
 export function CalcStep({ title, result, className }: Props) {
   const [open, setOpen] = useState(false);
+  const referenceLinks =
+    result.referenceLinks ?? (result.referenceUrl ? [{ label: result.reference, url: result.referenceUrl }] : []);
+
   return (
     <div className={`calc-step${className ? ` ${className}` : ''}`}>
       <button
@@ -44,8 +47,13 @@ export function CalcStep({ title, result, className }: Props) {
           )}
           <div className="formula-reference">
             根拠:{' '}
-            {result.referenceUrl ? (
-              <ExternalLink url={result.referenceUrl}>{result.reference}</ExternalLink>
+            {referenceLinks.length > 0 ? (
+              referenceLinks.map((link, i) => (
+                <span key={link.url}>
+                  {i > 0 && ' / '}
+                  <ExternalLink url={link.url}>{link.label}</ExternalLink>
+                </span>
+              ))
             ) : (
               result.reference
             )}

@@ -12,10 +12,12 @@ import {
   kyokaiKenpoTokyoReference,
   kyokaiKenpoTokyoReferenceUrl,
   pensionReference,
+  pensionReferenceUrl,
 } from '../../../rules/kyokai-kenpo-tokyo-2025';
 import {
   employmentInsuranceWorkerRate2025,
   employmentInsuranceReference,
+  employmentInsuranceReferenceUrl,
 } from '../../../rules/employment-insurance-2025';
 
 const yen = (n: number) => n.toLocaleString('ja-JP');
@@ -140,6 +142,7 @@ export function calcSocialInsurance(args: {
     formula: `${yen(pensionSm)} × ${(pensionInsuranceRate2025 * 100).toFixed(1)}% × 1/2 = ${yen(pensionMonthlyValue)} 円/月${pensionCapNote}`,
     breakdown: pensionBreakdown,
     reference: pensionReference,
+    referenceUrl: pensionReferenceUrl,
     steps: [
       { label: '月額', value: pensionMonthlyValue },
       { label: '年額（×12）', value: pensionMonthlyValue * 12 },
@@ -158,6 +161,7 @@ export function calcSocialInsurance(args: {
       { label: '雇用保険料(年額・本人負担)', value: `${yen(empMonthlyAnnualValue)} 円`, isResult: true },
     ],
     reference: employmentInsuranceReference,
+    referenceUrl: employmentInsuranceReferenceUrl,
     note:
       '雇用保険は健保・厚年と違って標準額への等級化や上限がなく、実際の賃金に直接料率を掛けます。' +
       'このカードは月給×12分の雇用保険で、賞与にかかる雇用保険分は夏・冬ボーナスの社保カードに含まれています。',
@@ -314,6 +318,7 @@ function calcBonusInsurance(
     formula: `${yen(pensionStandard)} × ${(pensionInsuranceRate2025 * 100).toFixed(1)}% × 1/2 = ${yen(pensionValue)} 円${pensionCapNote}`,
     breakdown: pensionBreakdown,
     reference: pensionReference,
+    referenceUrl: pensionReferenceUrl,
   };
 
   const employmentInsurance: CalcResult = {
@@ -331,7 +336,26 @@ function calcBonusInsurance(
             { label: '雇用保険料(1回分・本人負担)', value: `${yen(empBonusValue)} 円`, isResult: true },
           ],
     reference: employmentInsuranceReference,
+    referenceUrl: employmentInsuranceReferenceUrl,
   };
+
+  // 上限が適用された場合、内訳の各行に備考をつける
+  let healthNote: string | undefined;
+  if (rawStandard > healthCapped) {
+    healthNote = healthCapped === 0
+      ? `(年累計上限を使用済・残り 0 円)`
+      : `(年累計573万円の上限を適用)`;
+  }
+
+  let nursingNote: string | undefined;
+  if (hasNursingInsurance && rawStandard > healthCapped) {
+    nursingNote = healthCapped === 0
+      ? `(年累計上限により 0 円)`
+      : `(健保と同じ年累計上限を適用)`;
+  }
+
+  const pensionNote: string | undefined =
+    rawStandard > pensionStandard ? `(厚年の1回上限150万円を適用)` : undefined;
 
   const totalValue = healthValue + nursingValue + pensionValue + empBonusValue;
   const bonusTotal: CalcResult = {
@@ -340,9 +364,9 @@ function calcBonusInsurance(
       `健保 ${yen(healthValue)} + 介護 ${yen(nursingValue)} + 厚年 ${yen(pensionValue)}` +
       ` + 雇用 ${yen(empBonusValue)} = ${yen(totalValue)} 円`,
     breakdown: [
-      { label: '健康保険料', value: `${yen(healthValue)} 円` },
-      { label: '介護保険料', value: `${yen(nursingValue)} 円` },
-      { label: '厚生年金保険料', value: `${yen(pensionValue)} 円` },
+      { label: '健康保険料', value: `${yen(healthValue)} 円`, note: healthNote },
+      { label: '介護保険料', value: `${yen(nursingValue)} 円`, note: nursingNote },
+      { label: '厚生年金保険料', value: `${yen(pensionValue)} 円`, note: pensionNote },
       { label: '雇用保険料', value: `${yen(empBonusValue)} 円` },
       { label: '賞与1回分の社保 合計(本人負担)', value: `${yen(totalValue)} 円`, isResult: true },
     ],

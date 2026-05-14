@@ -3,6 +3,7 @@ import { calcEmploymentIncomeDeduction } from './employmentIncomeDeduction';
 import {
   spouseDeductionBrackets2025,
   spouseDeductionReference,
+  spouseDeductionReferenceLinks,
   type TaxpayerIncomeBucket,
 } from '../../../rules/spouse-deduction-2025';
 
@@ -21,7 +22,12 @@ export function calcSpouseDeduction(args: {
   taxpayerTotalIncome: number;
 }): DualDeduction {
   if (!args.hasSpouse) {
-    const zero: CalcResult = { value: 0, formula: '配偶者なし → 0 円', reference: spouseDeductionReference };
+    const zero: CalcResult = {
+      value: 0,
+      formula: '配偶者なし → 0 円',
+      reference: spouseDeductionReference,
+      referenceLinks: spouseDeductionReferenceLinks,
+    };
     return { forIncomeTax: zero, forResidenceTax: zero };
   }
 
@@ -39,6 +45,7 @@ export function calcSpouseDeduction(args: {
       `配偶者の合計所得 ${yen(spouseTotalIncome)} 円（${bracket.description}）` +
       ` × 本人合計所得 ${taxpayerBucket} → ${yen(amount)} 円`,
     reference: spouseDeductionReference,
+    referenceLinks: spouseDeductionReferenceLinks,
   });
 
   return {

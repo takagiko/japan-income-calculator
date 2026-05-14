@@ -5,3 +5,5 @@
 export const employmentInsuranceWorkerRate2025 = 0.0055;
 
 export const employmentInsuranceReference = '雇用保険料率 令和7年度（厚生労働省、一般の事業）';
+export const employmentInsuranceReferenceUrl =
+  'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/koyou_roudouhokenryouritsu/index.html';

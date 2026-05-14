@@ -12,6 +12,9 @@ import {
   residenceTaxIncomeReference,
   residenceTaxFlatReference,
   adjustmentDeductionReference,
+  tokyoResidentTaxAdjustmentReferenceUrl,
+  tokyoResidentTaxFlatReferenceUrl,
+  tokyoResidentTaxIncomeReferenceUrl,
 } from '../../../rules/residence-tax-2025';
 
 const yen = (n: number) => n.toLocaleString('ja-JP');
@@ -89,6 +92,7 @@ export function calcResidenceTax(args: {
     formula: adjFormula,
     breakdown: adjBreakdown,
     reference: adjustmentDeductionReference,
+    referenceUrl: tokyoResidentTaxAdjustmentReferenceUrl,
   };
 
   // 所得割（最終）
@@ -106,6 +110,7 @@ export function calcResidenceTax(args: {
       { label: '所得割(調整控除後)', value: `${yen(incomeBasedFinal)} 円`, isResult: true },
     ],
     reference: residenceTaxIncomeReference,
+    referenceUrl: tokyoResidentTaxIncomeReferenceUrl,
   };
 
   // 均等割 + 森林環境税
@@ -121,6 +126,7 @@ export function calcResidenceTax(args: {
       { label: '合計', value: `${yen(residenceTaxFlatTotal)} 円`, isResult: true },
     ],
     reference: residenceTaxFlatReference,
+    referenceUrl: tokyoResidentTaxFlatReferenceUrl,
   };
 
   // 合計
@@ -134,6 +140,10 @@ export function calcResidenceTax(args: {
       { label: '住民税 合計(年額)', value: `${yen(totalValue)} 円`, isResult: true },
     ],
     reference: '住民税 + 森林環境税の年税額（簡易合算）',
+    referenceLinks: [
+      { label: '東京都主税局: 個人住民税の所得割', url: tokyoResidentTaxIncomeReferenceUrl },
+      { label: '東京都主税局: 個人住民税の均等割', url: tokyoResidentTaxFlatReferenceUrl },
+    ],
     steps: [
       { label: '年額', value: totalValue },
       { label: '月額（÷12 概算）', value: Math.floor(totalValue / 12) },

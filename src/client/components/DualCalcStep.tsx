@@ -39,6 +39,9 @@ export function DualCalcStep({ title, result, className }: Props) {
 }
 
 function FormulaSection({ label, result }: { label: string; result: CalcResult }) {
+  const referenceLinks =
+    result.referenceLinks ?? (result.referenceUrl ? [{ label: result.reference, url: result.referenceUrl }] : []);
+
   return (
     <div className="formula-section">
       <strong>{label}</strong>
@@ -49,8 +52,13 @@ function FormulaSection({ label, result }: { label: string; result: CalcResult }
       )}
       <div className="formula-reference">
         根拠:{' '}
-        {result.referenceUrl ? (
-          <ExternalLink url={result.referenceUrl}>{result.reference}</ExternalLink>
+        {referenceLinks.length > 0 ? (
+          referenceLinks.map((link, i) => (
+            <span key={link.url}>
+              {i > 0 && ' / '}
+              <ExternalLink url={link.url}>{link.label}</ExternalLink>
+            </span>
+          ))
         ) : (
           result.reference
         )}

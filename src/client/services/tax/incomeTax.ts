@@ -3,6 +3,9 @@ import { rateFloor, rateMultiply } from '../../utils/math';
 import {
   incomeTaxBrackets2025,
   incomeTaxBracketsReference,
+  incomeTaxBracketsReferenceUrl,
+  incomeTaxMechanismReference,
+  incomeTaxMechanismReferenceUrl,
   reconstructionTaxRate2025,
   reconstructionTaxReference,
 } from '../../../rules/income-tax-brackets-2025';
@@ -23,7 +26,7 @@ export function calcIncomeTax(taxableIncomeForIncomeTax: number): IncomeTaxResul
 
   const baseTaxBreakdown: FormulaItem[] = [
     { label: '課税所得（所得税）', value: `${yen(taxableIncomeForIncomeTax)} 円` },
-    { label: 'ブラケット', value: bracket.description },
+    { label: '税率区分', value: bracket.description },
     { label: '税率', value: `${(bracket.rate * 100).toFixed(0)}%` },
   ];
   if (bracket.deduction > 0) {
@@ -48,6 +51,7 @@ export function calcIncomeTax(taxableIncomeForIncomeTax: number): IncomeTaxResul
         : `${yen(taxableIncomeForIncomeTax)} × ${(bracket.rate * 100).toFixed(0)}% − ${yen(bracket.deduction)} = ${yen(baseTaxValue)} 円（${bracket.description}）`,
     breakdown: baseTaxBreakdown,
     reference: incomeTaxBracketsReference,
+    referenceUrl: incomeTaxBracketsReferenceUrl,
   };
 
   const reconstructionValue = rateFloor(baseTaxValue, reconstructionTaxRate2025);
@@ -60,6 +64,7 @@ export function calcIncomeTax(taxableIncomeForIncomeTax: number): IncomeTaxResul
       { label: '復興特別所得税', value: `${yen(reconstructionValue)} 円`, isResult: true },
     ],
     reference: reconstructionTaxReference,
+    referenceUrl: incomeTaxBracketsReferenceUrl,
   };
 
   const beforeRounding = baseTaxValue + reconstructionValue;
@@ -75,6 +80,10 @@ export function calcIncomeTax(taxableIncomeForIncomeTax: number): IncomeTaxResul
       { label: '所得税 合計(年額)', value: `${yen(totalTaxValue)} 円`, isResult: true },
     ],
     reference: '年税額の確定（国税通則法 第119条 100円未満切り捨て）',
+    referenceLinks: [
+      { label: incomeTaxMechanismReference, url: incomeTaxMechanismReferenceUrl },
+      { label: '所得税の税率（タックスアンサー No.2260）', url: incomeTaxBracketsReferenceUrl },
+    ],
     steps: [
       { label: '年額', value: totalTaxValue },
       { label: '月額（÷12 概算）', value: Math.floor(totalTaxValue / 12) },

@@ -14,3 +14,5 @@ export const dependentDeductionAmounts2025 = {
 } as const satisfies Record<string, DependentDeductionAmount>;
 
 export const dependentDeductionReference = '扶養控除（所得税法 第84条 / 地方税法 第34条）';
+export const dependentDeductionReferenceUrl =
+  'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1180.htm';

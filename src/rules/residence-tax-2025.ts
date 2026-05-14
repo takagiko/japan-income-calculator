@@ -22,3 +22,8 @@ export const adjustmentDeductionExclusionIncome = 25_000_000; // 合計所得 2,
 export const residenceTaxIncomeReference = '住民税の所得割（地方税法 第314条の3 / 第35条、東京都標準）';
 export const residenceTaxFlatReference = '住民税の均等割 + 森林環境税（地方税法 第310条等、森林環境税法）令和6年度〜';
 export const adjustmentDeductionReference = '調整控除（地方税法 附則 第5条）';
+const tokyoResidentTaxBaseUrl = 'https://www.tax.metro.tokyo.lg.jp/kazei/life/kojin_ju';
+
+export const tokyoResidentTaxIncomeReferenceUrl = `${tokyoResidentTaxBaseUrl}#gaiyo_02`;
+export const tokyoResidentTaxFlatReferenceUrl = `${tokyoResidentTaxBaseUrl}#gaiyo_03`;
+export const tokyoResidentTaxAdjustmentReferenceUrl = `${tokyoResidentTaxBaseUrl}#gaiyo_08`;

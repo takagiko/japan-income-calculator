@@ -2,6 +2,7 @@ import type { CalcResult, DualDeduction } from '../../utils/types';
 import {
   basicDeductionBrackets2025,
   basicDeductionReference,
+  basicDeductionReferenceUrl,
 } from '../../../rules/basic-deduction-2025';
 
 const yen = (n: number) => n.toLocaleString('ja-JP');
@@ -13,6 +14,7 @@ export function calcBasicDeduction(totalIncome: number): DualDeduction {
     value: amount,
     formula: `${yen(amount)} 円（${bracket.description}）`,
     reference: basicDeductionReference,
+    referenceUrl: basicDeductionReferenceUrl,
   });
 
   return {

@@ -16,3 +16,5 @@ export const basicDeductionBrackets2025: BasicDeductionBracket[] = [
 ];
 
 export const basicDeductionReference = '基礎控除（所得税法 第86条 / 地方税法 第34条）';
+export const basicDeductionReferenceUrl =
+  'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm';

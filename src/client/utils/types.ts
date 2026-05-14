@@ -23,12 +23,18 @@ export type FormulaItem = {
   note?: string;       // 補足（小さい文字で右に併記）
 };
 
+export type ReferenceLink = {
+  label: string;
+  url: string;
+};
+
 export type CalcResult<T = number> = {
   value: T;
   formula: string;            // 一行サマリ（breakdown が無い場合のフォールバック）
   breakdown?: FormulaItem[];  // 構造化された内訳（あればこちらを優先表示）
   reference: string;
   referenceUrl?: string;      // 設定時、reference をクリック可能リンクにし、確認ダイアログを出してから外部サイトを開く
+  referenceLinks?: ReferenceLink[]; // 複数の根拠リンクがある場合に表示する
   steps?: { label: string; value: number; note?: string }[];
   note?: string;
 };
