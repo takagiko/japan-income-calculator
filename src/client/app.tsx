@@ -8,11 +8,11 @@ import { inputToSearchParams, searchParamsToInput } from './utils/urlState';
 import type { CalcInput } from './utils/types';
 
 const initialInput: CalcInput = {
-  monthlySalary: 300_000,
-  summerBonus: 700_000,
-  winterBonus: 700_000,
+  monthlySalary: 450_000,
+  summerBonus: 1_000_000,
+  winterBonus: 1_600_000,
   hasNursingInsurance: false,
-  hasSpouse: false,
+  hasSpouse: true,
   spouseIncome: 0,
   dependents: { general: 0, specific: 0, elderly: 0, livingWithElderlyParent: 0 },
 };
@@ -24,7 +24,7 @@ export function App() {
   const r = useMemo(() => calculateAll(input), [input]);
 
   useEffect(() => {
-    const qs = inputToSearchParams(input);
+    const qs = inputToSearchParams(input, initialInput);
     const newUrl = qs ? `?${qs}` : window.location.pathname;
     window.history.replaceState({}, '', newUrl);
   }, [input]);
@@ -32,7 +32,6 @@ export function App() {
   return (
     <main className="app">
       <h1>日本の給与所得 税・社会保険料 計算機</h1>
-      <p className="preamble">令和7年度 / 協会けんぽ東京支部 / 東京住民税 / 65歳未満</p>
 
       <section>
         <h2>入力欄</h2>
@@ -111,8 +110,9 @@ export function App() {
           <strong>※ 本ツールの計算結果は概算です。</strong>正式な税額・納付額の確定には、税務署または税理士等の専門家にご相談ください。
         </p>
         <p className="disclaimer-sub">
-          対象: 令和7年度 / 協会けんぽ東京支部 / 東京住民税 / 65歳未満。
-          既知の単純化: 住民税は同年度の年収で計算（実際は前年所得に対する翌年度課税）／調整控除の人的控除差は実際の控除額の差を簡略適用／雇用保険は支払源（月給・夏ボ・冬ボ）で按分／月給は実額で標準報酬月額を決定し、賞与は別途標準賞与額で計算。
+          <span>対象: 令和7年度 / 協会けんぽ東京支部 / 東京都内（特別区・市町村）の個人住民税（標準税率） / 65歳未満。</span>
+          <br />
+          既知の単純化: 住民税は同年度の年収で計算（実際は前年所得に対する翌年度課税）／所得税は年間税額を先に概算し、月給・賞与の支給額比率で按分（実際は毎月の給与・賞与ごとに源泉徴収し、年末調整で年間税額との差額を精算）／調整控除の人的控除差は実際の控除額の差を簡略適用／雇用保険は支払源（月給・夏ボ・冬ボ）で按分／月給は実額で標準報酬月額を決定し、賞与は別途標準賞与額で計算。
         </p>
         <p className="disclaimer-sub">
           スコープ外（実装していない）: iDeCo、ふるさと納税、生命保険料控除、地震保険料控除、住宅ローン控除、医療費控除、障害者控除、寡婦・ひとり親控除、勤労学生控除。
