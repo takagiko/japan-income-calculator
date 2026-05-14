@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "月給と賞与から、社会保険料・所得税・住民税・手取りを計算式と根拠付きで表示する Web 計算機。令和7年度・協会けんぽ東京支部・東京住民税・65歳未満を前提とした概算ツール。",
+  "description": "月給と賞与から、社会保険料・所得税・住民税・手取りを計算式と根拠付きで表示する Web 計算機。令和7年度・協会けんぽ東京支部・東京都内の個人住民税（標準税率）・65歳未満を前提とした概算ツール。",
   "license": "MIT",
   "author": "takagiko",
   "homepage": "https://japan-income-calculator.vercel.app/",
