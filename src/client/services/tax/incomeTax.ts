@@ -8,6 +8,7 @@ import {
   incomeTaxMechanismReferenceUrl,
   reconstructionTaxRate2025,
   reconstructionTaxReference,
+  reconstructionTaxReferenceUrl,
 } from '../../../rules/income-tax-brackets-2025';
 
 const yen = (n: number) => n.toLocaleString('ja-JP');
@@ -64,7 +65,7 @@ export function calcIncomeTax(taxableIncomeForIncomeTax: number): IncomeTaxResul
       { label: '復興特別所得税', value: `${yen(reconstructionValue)} 円`, isResult: true },
     ],
     reference: reconstructionTaxReference,
-    referenceUrl: incomeTaxBracketsReferenceUrl,
+    referenceUrl: reconstructionTaxReferenceUrl,
   };
 
   const beforeRounding = baseTaxValue + reconstructionValue;

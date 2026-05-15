@@ -25,6 +25,8 @@ export const incomeTaxBracketsReferenceUrl =
   'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm';
 export const reconstructionTaxRate2025 = 0.021;
 export const reconstructionTaxReference = '復興特別所得税（東日本大震災からの復興のための施策を実施するために必要な財源の確保に関する特別措置法）';
+export const reconstructionTaxReferenceUrl =
+  'https://www.nta.go.jp/publication/pamph/shotoku/fukko_tokubetsu/index.htm';
 export const incomeTaxMechanismReference = '所得税のしくみ（タックスアンサー No.1000）';
 export const incomeTaxMechanismReferenceUrl =
   'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1000.htm';
